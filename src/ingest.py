@@ -34,6 +34,7 @@ hpi_df.to_csv("data/raw/fred_hpi_rate_2024.csv", index = False)
 
 #setting up duckdb connections
 con = duckdb.connect("data/hmda.duckdb")
+
 con.execute("""
             CREATE TABLE IF NOT EXISTS hmda_raw AS
             SELECT * FROM read_csv_auto("data/raw/hmda_nc_va_2024.csv")
@@ -41,7 +42,35 @@ con.execute("""
 )
 row_count = con.execute("SELECT COUNT(*) FROM hmda_raw").fetchone()[0]
 print(f"There are {row_count} rows in the hmda_raw table.")
+
+con.execute(""" 
+            CREATE TABLE IF NOT EXISTS mortgage_rate AS 
+            SELECT * FROM read_csv_auto("data/raw/fred_mortgage_rate_2024.csv")
+            """
+)
+row_count1 = con.execute("SELECT COUNT(*) FROM mortgage_rate").fetchone()[0]
+print(f"There are {row_count1} rows in the mortgage_rate table.")
+
+con.execute("""
+            CREATE TABLE IF NOT EXISTS unemployment_rate AS
+            SELECT * FROM read_csv_auto("data/raw/fred_unemployment_rate_2024.csv")
+            """
+)
+row_count2 = con.execute("SELECT COUNT(*) FROM unemployment_rate").fetchone()[0]
+print(f"There are {row_count2} rows in the unemployment_rate table.")
+
+con.execute("""
+            CREATE TABLE IF NOT EXISTS housing_price_index AS
+            SELECT * FROM read_csv_auto("data/raw/fred_hpi_rate_2024.csv")
+            """
+)
+row_count3 = con.execute("SELECT COUNT(*) FROM housing_price_index").fetchone()[0]
+print(f"There are {row_count3} rows in the housing_price_index table.")
+
 con.close()
+
+
+
 
 print("Ingest Complete!")
 
